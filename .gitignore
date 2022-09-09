@@ -31,4 +31,13 @@
 *.out
 *.app
 
+# for cmake
 build
+
+# for bazel
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-wol
+
+
