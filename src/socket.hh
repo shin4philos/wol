@@ -18,24 +18,24 @@ namespace wol {
     /// - Socket is noncopyable and nonmovable.
     //----------------------------------------------------------------------------
 
-    constexpr int SocketError = -1;		///< socket error, errno not set.
+    static constexpr int SocketError = -1;	///< socket error, errno not set.
 
     class Socket {
 	int fd_{ SocketError };			///< socket file descriptor.
 
     public:
 	Socket( int domain, int type, int protocol ){
-	    if (( fd_ = socket( domain, type, protocol )) == SocketError )[[unlikely]]
+	    if (( fd_ = socket( domain, type, protocol )) == SocketError ) [[ unlikely ]]
 		throw std::runtime_error( "can not open socket" );
 	}
-	~Socket(){ close( fd_ ); }
-	Socket()                           = delete;
-	Socket( const Socket& )            = delete;
-	Socket &operator=( const Socket& ) = delete;
-	Socket( Socket &&r )               = delete;
-	Socket &operator=( Socket &&r )    = delete;
+	Socket( int d, int t, int p, int level, int opt ): Socket( d, t, p ){
+	    if ( int v{ 1 }; setsockopt( fd_, level, opt,
+					 &v, sizeof( v )) == SocketError ) [[ unlikely ]]
+		throw std::runtime_error( "can't set option to socket" );
+	};
+	virtual ~Socket(){ close( fd_ ); }
 
-	operator const int() const { return fd_; }
+	operator int() const { return fd_; }		/// implicit conversion.
     };
 }
 #endif

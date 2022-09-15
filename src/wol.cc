@@ -5,7 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "socket.hh"
 #include "mac.hh"
 #include "mpacket.hh"
 

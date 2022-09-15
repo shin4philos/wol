@@ -40,4 +40,6 @@ bazel-out
 bazel-testlogs
 bazel-wol
 
+# for doxygen
+docs/html
 

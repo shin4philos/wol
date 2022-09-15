@@ -10,34 +10,35 @@
 #include <vector>
 
 namespace wol {
+    class MacAddress final {				/// Mac address parser.
+	static constexpr int MacLen = 6;		///< Mac address length.
+	static constexpr int Hex = 16;			///< base 16
 
-    const int MacLen = 6;				/// Mac address length.
+	std::vector< u_char > mac_;
 
-    //----------------------------------------------------------------------------
-    /// Mac address parser.
-    ///
-    /// - Parse mac address "xx:xx:xx:xx:xx:xx" to vectyor< u_chat >.
-    //----------------------------------------------------------------------------
-
-    struct MacAddress : public std::vector< u_char >{
+    public:
 	MacAddress( const char *p ){ parse( p ); }
+	MacAddress( const std::string &s ){ parse( s.c_str()); }
 
-	void parse( const char *p ){		/// Parse from c_str to vector< u_char >.
+	void parse( const char *p ){	/// Parse from c_str to vector< u_char >.
+	    if ( !p )
+		throw std::runtime_error( "null mac address." );
+
 	    using std::ranges::split_view;
 	    using std::string_view;
 	    try {
 		for ( const auto octet : split_view{ string_view( p ), ':' }){
 		    auto it = octet.begin();
-		    push_back( std::stoi( std::string{ *it++, *it }, nullptr, 16 ));
+		    mac_.push_back( std::stoi( std::string{ *it++, *it }, nullptr, Hex ));
 		}
 	    }
 	    catch( const std::exception &e ){
 		throw std::runtime_error( "syntax error in mac address." );
 	    }
-
-	    if ( size() != MacLen )
+	    if ( mac_.size() != MacLen )
 		throw std::runtime_error( "mac address too short." );
 	}
+	operator std::vector< u_char >&(){ return mac_; };
     };
 }
 #endif

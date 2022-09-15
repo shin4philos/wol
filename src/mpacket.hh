@@ -6,6 +6,8 @@
 #define __WOL_MPACKET__
 
 #include <cstring>
+#include <vector>
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -13,10 +15,6 @@
 #include "mac.hh"
 
 namespace wol {
-    constexpr int Header = 6;		// magic packet header length
-    constexpr int Repeat = 16;		// repeat times of mac
-    constexpr int Port   = 9;		// port number of discard
-
     //----------------------------------------------------------------------------
     /// Make and send magic packet
     ///
@@ -24,43 +22,36 @@ namespace wol {
     /// 16 回繰り返される。（データ長は 102 byte）
     //----------------------------------------------------------------------------
 
-    class MagicPacket {
-	u_char packet_[ Header + MacLen * Repeat ]{ "\xff\xff\xff\xff\xff\xff" };
+    class MagicPacket final {
+	static constexpr int Header = 6;	// magic packet header length
+	static constexpr int Repeat = 16;	// repeat times of mac
+	static constexpr int Port   = 9;	// port number of discard
 
-	void check( bool error, const char *message = nullptr ) const {
-	    if ( error )
-		throw std::runtime_error( message ? message : strerror( errno ));
-	}
-
-    public:
-	MagicPacket( const std::vector< u_char > &mac ){
-	    auto *p = &packet_[ Header ];
-	    for ( auto i{ 0 }; i < Repeat ; ++i, p += MacLen )
-		std::memcpy( p, mac.data(), MacLen );
-	}
-
-	const auto *packet(){ return packet_; };
+	std::vector< u_char > packet_;
 
 	const auto address( sockaddr_in &addr ) const {
 	    return inet_aton( "255.255.255.255",
 			      reinterpret_cast< in_addr * >( &addr.sin_addr.s_addr ));
 	};
-	const auto option( Socket &socket ) const {
-	    int val{ 1 };
-	    return setsockopt( socket, SOL_SOCKET, SO_BROADCAST,
-			       reinterpret_cast< char * >( &val ), sizeof( val ));
-	};
 	const auto send( Socket &socket, sockaddr_in &addr ) const {
-	    return sendto( socket, packet_, sizeof( packet_ ), 0,
+	    return sendto( socket, packet_.data(), size( packet_ ), 0,
 			   reinterpret_cast< sockaddr * >( &addr ), sizeof( addr ));
 	};
 
+    public:
+	MagicPacket( const std::vector< u_char > &mac ): packet_( Header, 0xff ){
+	    for ( int i = 0; i < Repeat; ++i )
+		packet_.insert( packet_.end(), mac.begin(), mac.end());
+	}
+
+	const auto *packet() const { return packet_.data(); };
 	void send() const {
-	    Socket sock( AF_INET, SOCK_DGRAM, 0 );
-	    sockaddr_in addr = { AF_INET, htons( Port )};
-	    check( address( addr )    == 0,"inet_aton: can not convert ??" );
-	    check( option( sock )     == SocketError );
-	    check( send( sock, addr ) == SocketError );
+	    Socket sock( AF_INET, SOCK_DGRAM, 0, SOL_SOCKET, SO_BROADCAST );
+	    sockaddr_in addr = { .sin_family = AF_INET, .sin_port = htons( Port )};
+	    if ( !address( addr )) [[ unlikely ]]
+		throw std::runtime_error( "inet_aton: can not convert ??" );
+	    else if ( send( sock, addr ) == SocketError ) [[ unlikely ]]
+		throw std::runtime_error( strerror( errno ));
 	}
     };
 }
