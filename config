@@ -1,0 +1,35 @@
+#!/bin/dash
+# ------------------------------------------------------------
+#  configure cmake setting.
+# ------------------------------------------------------------
+
+if [ ! -e build ]; then
+    mkdir build
+fi
+
+OPT=""
+while [ "$1" != "" ]
+do
+    if [ "$1" = "gcc" ]; then
+        echo -- use gcc
+        OPT=${OPT}"-DCMAKE_C_COMPILER=$(which gcc) "
+        OPT=${OPT}"-DCMAKE_CXX_COMPILER=$(which g++) "
+    elif [ "$1" = "clang" ]; then
+	echo -- use clang    	
+        OPT=${OPT}"-DCMAKE_C_COMPILER=$(which clang) "
+	OPT=${OPT}"-DCMAKE_CXX_COMPILER=$(which clang++) "
+    elif [ "$1" = "debug" ]; then
+        echo -- debug mode
+        OPT=${OPT}"-DCMAKE_BUILD_TYPE=Debug "
+    elif [ "$1" = "release" ]; then
+    	echo -- release mode
+        OPT=${OPT}"-DCMAKE_BUILD_TYPE=Release "
+    else
+        echo unknown token $1.
+	exit 1
+    fi
+    shift
+done
+
+cmake -S . -B build ${OPT}
+exit 0
