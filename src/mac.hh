@@ -10,17 +10,25 @@
 #include <vector>
 
 namespace wol {
-    class MacAddress final {				/// Mac address parser.
-	static constexpr int MacLen = 6;		///< Mac address length.
-	static constexpr int Hex = 16;			///< base 16
+    //----------------------------------------------------------------------------
+    /// Parse and keep Mac Address.
+    /// - Insufficient support for split_view with clang 14.0.0-1ubuntu1.
+    /// - Pipeline style is supported in std::ranges.
+    /// - To delive and extend, remove final and not conposition but protected inhelit.
+    ///   - class MacAddress final {}  -> class MackAddress : std::vector< u_char >{}
+    //----------------------------------------------------------------------------
 
-	std::vector< u_char > mac_;
+    class MacAddress final {
+	static constexpr int MacLen = 6;	///< Mac length in bytes.
+	static constexpr int Hex = 16;		///< Mac is written in hexadecimal.
+
+	std::vector< u_char > mac_;		///< vector keeping Mac Address.
 
     public:
 	MacAddress( const char *p ){ parse( p ); }
-	MacAddress( const std::string &s ){ parse( s.c_str()); }
+	MacAddress( const std::string &s ): MacAddress( s.c_str()){}
 
-	void parse( const char *p ){	/// Parse from c_str to vector< u_char >.
+	void parse( const char *p ){	/// Parse from "xx:xx..." to vector< u_char >.
 	    if ( !p )
 		throw std::runtime_error( "null mac address." );
 
@@ -38,7 +46,7 @@ namespace wol {
 	    if ( mac_.size() != MacLen )
 		throw std::runtime_error( "mac address too short." );
 	}
-	operator std::vector< u_char >&(){ return mac_; };
+	operator const std::vector< u_char >&() const { return mac_; };
     };
 }
 #endif

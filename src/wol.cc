@@ -29,7 +29,7 @@ int main( int argc, char *argv[]){
 	    usage();
 	    throw std::runtime_error( "no mac address." );
 	}
-	MagicPacket{ MacAddress{ argv[ 1 ]}}.send();
+	MagicPacket{ MacAddress{ argv[ 1 ]}}.broadcast();
     }
     catch( const std::exception &e ){
 	std::cerr << argv[ 0 ] << ": error: " << e.what() << std::endl;

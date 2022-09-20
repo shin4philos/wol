@@ -10,6 +10,8 @@
 #include <unistd.h>
 
 namespace wol {
+    static constexpr int SocketError = -1;	///< socket error, errno not set.
+
     //----------------------------------------------------------------------------
     /// RAII object for socket file descriptor.
     /// 
@@ -17,8 +19,6 @@ namespace wol {
     ///   to create file descriptor.
     /// - Socket is noncopyable and nonmovable.
     //----------------------------------------------------------------------------
-
-    static constexpr int SocketError = -1;	///< socket error, errno not set.
 
     class Socket {
 	int fd_{ SocketError };			///< socket file descriptor.
@@ -35,7 +35,7 @@ namespace wol {
 	};
 	virtual ~Socket(){ close( fd_ ); }
 
-	operator int() const { return fd_; }		/// implicit conversion.
+	operator const int&() const { return fd_; }	/// implicit conversion.
     };
 }
 #endif

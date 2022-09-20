@@ -43,3 +43,7 @@ bazel-wol
 # for doxygen
 docs/html
 
+# for gtags
+src/GPATH
+src/GRTAGS
+src/GTAGS

@@ -45,7 +45,8 @@ namespace wol {
 	}
 
 	const auto *packet() const { return packet_.data(); };
-	void send() const {
+
+	void broadcast() const {		/// make and broadcast magic packet
 	    Socket sock( AF_INET, SOCK_DGRAM, 0, SOL_SOCKET, SO_BROADCAST );
 	    sockaddr_in addr = { .sin_family = AF_INET, .sin_port = htons( Port )};
 	    if ( !address( addr )) [[ unlikely ]]
