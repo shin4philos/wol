@@ -18,8 +18,9 @@ namespace wol {
     ///   - class MacAddress final {}  -> class MackAddress : std::vector< u_char >{}
     //----------------------------------------------------------------------------
 
+    static constexpr int MacLen = 6;		///< Mac length in bytes.
+
     class MacAddress final {
-	static constexpr int MacLen = 6;	///< Mac length in bytes.
 	static constexpr int Hex = 16;		///< Mac is written in hexadecimal.
 
 	std::vector< u_char > mac_;		///< vector keeping Mac Address.
@@ -44,9 +45,9 @@ namespace wol {
 		throw std::runtime_error( "syntax error in mac address." );
 	    }
 	    if ( mac_.size() != MacLen )
-		throw std::runtime_error( "mac address too short." );
+		throw std::runtime_error( "illegal length of mac address." );
 	}
-	operator const std::vector< u_char >&() const { return mac_; };
+	const auto data() const { return mac_; }
     };
 }
 #endif
