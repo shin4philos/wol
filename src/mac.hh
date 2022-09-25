@@ -18,12 +18,14 @@ namespace wol {
     ///   - class MacAddress final {}  -> class MackAddress : std::vector< u_char >{}
     //----------------------------------------------------------------------------
 
+    using Mac = std::vector< u_char >;		///< vector keeping Mac Address.
+
     static constexpr int MacLen = 6;		///< Mac length in bytes.
 
     class MacAddress final {
 	static constexpr int Hex = 16;		///< Mac is written in hexadecimal.
 
-	std::vector< u_char > mac_;		///< vector keeping Mac Address.
+	Mac mac_;				///< vector keeping Mac Address.
 
     public:
 	MacAddress( const char *p ){ parse( p ); }
