@@ -43,14 +43,14 @@ TEST( MacAddressTest, IllegalParameter ){
 
 TEST( MagicPacketTest, NetworkError ){
     MacAddress mac{ MacAddress{ "11:22:33:44:55:66" }};
-    EXPECT_NO_THROW( MagicPacket{ mac.data()}.broadcast());
+    EXPECT_NO_THROW( MagicPacket{ mac }.broadcast());
 
     struct MockSocketIF : public SocketIF {
 	MOCK_METHOD( int, aton, ( sockaddr_in& ), ( override ));
 	MOCK_METHOD( int, send, ( Socket&, const Packet&, sockaddr_in& ), ( override ));
     };
     MockSocketIF mockif{};
-    MagicPacket mpacket{ mac.data(), &mockif };
+    MagicPacket mpacket{ mac, &mockif };
     EXPECT_CALL( mockif, aton( testing::_ )).
 	WillOnce( testing::Return( 0 )).
 	WillOnce( testing::Return( 1 ));

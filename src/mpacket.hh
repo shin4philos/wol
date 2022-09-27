@@ -5,6 +5,7 @@
 #ifndef __WOL_MPACKET__
 #define __WOL_MPACKET__
 
+#include <cassert>
 #include <cstring>
 #include <vector>
 
@@ -44,9 +45,11 @@ namespace wol {
     static RealSocketIF RealIF{};
 
     //----------------------------------------------------------------------------
-    /// Make and send magic packet
-    /// Magic Packet のデータ部は 0xff が 6 回繰り返された後、送信先の MAC address が
-    /// 16 回繰り返される。（データ長は 102 byte）
+    /// Make and send magic packet.  
+    /// SocketIF の差し替えは unit test でのみ使うので、エラーチェックは assert
+    /// ですませる。
+    /// @note Magic Packet のデータ部は 0xff が 6 回繰り返された後、送信先の MAC
+    ///       address が16 回繰り返される。（データ長は 102 byte）
     //----------------------------------------------------------------------------
 
     class MagicPacket final {
@@ -58,10 +61,13 @@ namespace wol {
 	SocketIF *sockif_{};
 
     public:
-	MagicPacket( const Mac &mac, SocketIF *sockif = &RealIF )
-				: packet_( Header, 0xff ), sockif_( sockif ){
+	MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealIF )
+					: packet_( Header, 0xff ), sockif_( sockif )
+	{
+	    assert( sockif_ );
+	    auto v = mac.data();
 	    for ( int i = 0; i < Repeat; ++i )
-		packet_.insert( packet_.end(), mac.begin(), mac.end());
+		packet_.insert( packet_.end(), v.begin(), v.end());
 	}
 
 	void broadcast() const {		/// make and broadcast magic packet
