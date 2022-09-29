@@ -31,18 +31,18 @@ namespace wol {
     /// concreate class of socket library.
     //----------------------------------------------------------------------------
 
-    struct RealSocketIF : public SocketIF {
-	virtual int aton( sockaddr_in &addr ){
+    struct RealSocketIF final : public SocketIF {
+	virtual int aton( sockaddr_in &addr ) override {
 	    return inet_aton( "255.255.255.255",
 			      reinterpret_cast< in_addr * >( &addr.sin_addr.s_addr ));
 	}
 	virtual int send( Socket &socket,
-			    const Packet &packet, sockaddr_in &addr ){
+			  const Packet &packet, sockaddr_in &addr ) override {
 	    return sendto( socket, packet.data(), packet.size(), 0,
 			   reinterpret_cast< sockaddr * >( &addr ), sizeof( addr ));
 	}
     };
-    static RealSocketIF RealIF{};
+    static RealSocketIF RealSockIF{};
 
     //----------------------------------------------------------------------------
     /// Make and send magic packet.  
@@ -61,10 +61,12 @@ namespace wol {
 	SocketIF *sockif_{};
 
     public:
-	MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealIF )
+	MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealSockIF )
 					: packet_( Header, 0xff ), sockif_( sockif )
 	{
-	    assert( sockif_ );
+#ifndef UNIT_TEST				///< Allow changing SocketIF only
+	    assert( sockif_ == &RealSockIF );	///< UNIT_TEST. UNIT_TEST is defined
+#endif						///< by compile option.
 	    auto v = mac.data();
 	    for ( int i = 0; i < Repeat; ++i )
 		packet_.insert( packet_.end(), v.begin(), v.end());
