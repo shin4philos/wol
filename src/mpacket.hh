@@ -61,7 +61,7 @@ namespace wol {
 	SocketIF *sockif_{};
 
     public:
-	MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealSockIF )
+	explicit MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealSockIF )
 					: packet_( Header, 0xff ), sockif_( sockif )
 	{
 #ifndef UNIT_TEST				///< Allow changing SocketIF only

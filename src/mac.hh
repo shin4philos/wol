@@ -28,8 +28,8 @@ namespace wol {
 	Mac mac_;				///< vector keeping Mac Address.
 
     public:
-	MacAddress( const char *p ){ parse( p ); }
-	MacAddress( const std::string &s ): MacAddress( s.c_str()){}
+	explicit MacAddress( const char *p ){ parse( p ); }
+	explicit MacAddress( const std::string &s ): MacAddress( s.c_str()){}
 
 	void parse( const char *p ){	/// Parse from "xx:xx..." to vector< u_char >.
 	    if ( !p )
