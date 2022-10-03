@@ -64,9 +64,10 @@ namespace wol {
 	explicit MagicPacket( const MacAddress &mac, SocketIF *sockif = &RealSockIF )
 					: packet_( Header, 0xff ), sockif_( sockif )
 	{
-#ifndef UNIT_TEST				///< Allow changing SocketIF only
-	    assert( sockif_ == &RealSockIF );	///< UNIT_TEST. UNIT_TEST is defined
-#endif						///< by compile option.
+#ifndef UNIT_TEST	// Only UNIT_TEST and Debug mode, you can set your own SocketIF.
+	    assert( sockif_ == &RealSockIF &&
+		    "You can set your own SocketIF only for UNIT_TEST." );
+#endif
 	    auto v = mac.data();
 	    for ( int i = 0; i < Repeat; ++i )
 		packet_.insert( packet_.end(), v.begin(), v.end());

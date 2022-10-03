@@ -30,6 +30,13 @@ add_custom_target( docs doxygen Doxyfile		# make documents
 add_custom_target( tags gtags				# make tags
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src
 )
+add_custom_target( coverage
+  COMMAND lcov --capture --directory . --output-file all.info --quiet
+  COMMAND lcov --extract all.info "/home/shin/git/wol/\\*" -o wol.info --quiet
+  COMMAND lcov --remove wol.info "/home/shin/git/wol/build/\\*" -o notest.info --quiet
+  COMMAND genhtml notest.info -o coverage --quiet
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/CMakeFiles/wol_test.dir
+)
 
 # -- additinal clean files
 set_property( TARGET tags APPEND
