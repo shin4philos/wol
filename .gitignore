@@ -40,10 +40,13 @@ bazel-out
 bazel-testlogs
 bazel-wol
 
-# for doxygen
+# for doxygen, cppcheck, gcov
 docs/html
+docs/analysis/
+docs/coverage/
 
 # for gtags
 src/GPATH
 src/GRTAGS
 src/GTAGS
+
