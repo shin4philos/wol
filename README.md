@@ -2,17 +2,34 @@
 
 This project is created for preparation and evaluation of the development environment.  
 
-1. git
-1. cmake
-1. c++20
-1. cppcheck
-1. gtest/gmock
-1. valgrind
-1. gdb/nemiver
-1. markdown
-1. doxygen
-1. plantuml
-1. emacs
+- Editor
+  1. emacs
 
-- [documents](docs/html/index.html)
-- [coverage](build/test/CMakeFiles/wol_test.dir/coverage/index.html)
+- Document
+  1. doxygen
+  > [documents](docs/html/index.html)
+  1. markdown
+  1. plantuml
+
+- Test
+  1. gtest/gmock
+  1. valgrind
+  > valgrind --tool=memcheck --leak-check=yes build/src/wol 11:22:33:44:55:66
+  1. gcov
+  > [coverage](docs/coverage/index.html)
+
+- Debug
+  1. gdb/nemiver
+
+- Version Control
+  1. git
+
+- Build
+  1. cmake
+
+- Langage
+  1. c++20
+  1. cppcheck
+  > [analysis](docs/analysis/index.html)
+
+
