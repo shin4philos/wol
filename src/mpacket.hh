@@ -81,7 +81,7 @@ namespace wol {
 	    else if ( sockif_->send( sock, packet_, addr ) == SocketError ) [[ unlikely ]]
 		throw std::runtime_error( strerror( errno ));
 	}
-	const auto *packet() const { return packet_.data(); };
+	[[ maybe_unused ]] const auto *packet() const { return packet_.data(); };
     };
 }
 #endif
