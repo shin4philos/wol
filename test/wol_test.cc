@@ -22,6 +22,7 @@ TEST( SocketTest, NormalParameter ){
 TEST( SocketTest, IllegalParameter ){
     EXPECT_THROW( Socket( -1, SOCK_DGRAM, 0 ), runtime_error );
     EXPECT_THROW( Socket( -1, SOCK_DGRAM, 0, SOL_SOCKET, SO_BROADCAST ), runtime_error );
+    EXPECT_THROW( Socket( AF_INET, SOCK_DGRAM, 0, SOL_SOCKET, -1 ), runtime_error );
 }
 
 TEST( MacAddressTest, NormalParameter ){

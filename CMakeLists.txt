@@ -41,8 +41,8 @@ add_custom_target( tags gtags				# make tags
 add_custom_target( coverage
   COMMAND lcov --capture --directory ${CMAKE_BINARY_DIR}/test/CMakeFiles/wol_test.dir --output-file all.info --quiet
   COMMAND lcov --extract all.info "/home/shin/git/wol/\\*" -o wol.info --quiet
-  COMMAND lcov --remove wol.info "/home/shin/git/wol/build/\\*" -o notest.info --quiet
-  COMMAND genhtml notest.info -o coverage --quiet
+  COMMAND lcov --remove wol.info "/home/shin/git/wol/build/\\*" -o wol.src.info --quiet
+  COMMAND genhtml wol.src.info -o coverage --quiet
   COMMAND rm *.info
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/docs
 )
