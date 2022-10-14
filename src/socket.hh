@@ -9,6 +9,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
 namespace wol {
     //----------------------------------------------------------------------------
     /// interface of inet library.
