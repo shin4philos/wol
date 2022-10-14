@@ -11,6 +11,7 @@ target_compile_options(
     $<$<CONFIG:Debug>:-ggdb3 >
 )
 target_compile_features( wol PRIVATE cxx_std_20 )
+include( GoogleTest )
 
 # --------------------------------------------------------------------------------
 #  end of file <src/CMakeLists.txt>
